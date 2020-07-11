@@ -1,0 +1,35 @@
+import { ImageSourcePropType } from "react-native";
+
+const imageMapping: { [key: number]: ImageSourcePropType } = {
+  1: require('../../assets/images/pokemons/001.png'),
+  2: require('../../assets/images/pokemons/002.png'),
+  3: require('../../assets/images/pokemons/003.png'),
+  4: require('../../assets/images/pokemons/004.png'),
+  5: require('../../assets/images/pokemons/005.png'),
+  6: require('../../assets/images/pokemons/006.png'),
+  7: require('../../assets/images/pokemons/007.png'),
+  8: require('../../assets/images/pokemons/008.png'),
+  9: require('../../assets/images/pokemons/009.png'),
+  10: require('../../assets/images/pokemons/010.png'),
+  11: require('../../assets/images/pokemons/011.png'),
+  12: require('../../assets/images/pokemons/012.png'),
+  13: require('../../assets/images/pokemons/013.png'),
+  14: require('../../assets/images/pokemons/014.png'),
+  15: require('../../assets/images/pokemons/015.png'),
+  16: require('../../assets/images/pokemons/016.png'),
+  17: require('../../assets/images/pokemons/017.png'),
+  18: require('../../assets/images/pokemons/018.png'),
+  19: require('../../assets/images/pokemons/019.png'),
+  20: require('../../assets/images/pokemons/020.png'),
+  21: require('../../assets/images/pokemons/021.png'),
+  22: require('../../assets/images/pokemons/022.png'),
+  23: require('../../assets/images/pokemons/023.png'),
+  24: require('../../assets/images/pokemons/024.png'),
+  25: require('../../assets/images/pokemons/025.png'),
+  26: require('../../assets/images/pokemons/026.png'),
+  27: require('../../assets/images/pokemons/027.png'),
+  28: require('../../assets/images/pokemons/028.png'),
+  29: require('../../assets/images/pokemons/029.png'),
+};
+
+export default imageMapping;
