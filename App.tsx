@@ -9,33 +9,57 @@ import Back from './assets/svgs/back.svg'
 import { StyleSheet } from 'react-native';
 import * as eva from '@eva-design/eva';
 import { ApplicationProvider } from '@ui-kitten/components';
+import { createSharedElementStackNavigator } from 'react-navigation-shared-element';
+import PokemonCardOpener from './src/transitions/PokemonCardOpener';
 
 const Stack = createStackNavigator();
+const SharedStack = createSharedElementStackNavigator();
 
-function App() {
+function SharedStackScreen() {
   return (
-    <ApplicationProvider {...eva} theme={eva.light} >
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home" >
-        <Stack.Screen name="Home" component={HomeScreen} options={{
-          headerShown: false
-        }} />
-        <Stack.Screen name="Pokedex" component={PokedexScreen} options={{
-          title: "",
-          headerBackTitle: " ",
-          headerTransparent: true,
-          headerBackImage: () => {
-            return <Back fill={'black'} style={[StyleSheet.absoluteFill, { width: 30, marginLeft: 20 }]} />;
-          },
-        }} />
-        <Stack.Screen name="Pokemon" component={PokemonScreen} options={{
+    <SharedStack.Navigator screenOptions={{
+      ...PokemonCardOpener
+    }}>
+      <SharedStack.Screen name="Pokedex" component={PokedexScreen} options={{
+        title: "",
+        headerBackTitle: " ",
+        headerTransparent: true,
+        headerBackImage: () => {
+          return <Back fill={'black'} style={[StyleSheet.absoluteFill, { width: 30, marginLeft: 20 }]} />;
+        },
+      }} />
+      <SharedStack.Screen name="Pokemon" component={PokemonScreen}   
+        sharedElementsConfig={(route, otherRoute, showing) => {
+          const { pokemonId } = route.params;
+          return [
+            `item.${pokemonId}.photo`,
+            `item.${pokemonId}.name`
+          ];
+        }}
+        options={{
           title: "",
           headerBackTitle: " ",
           headerTransparent: true,
           headerBackImage: () => {
             return <Back fill={'white'} style={[StyleSheet.absoluteFill, { width: 30, marginLeft: 20 }]} />;
           },
-        }} /> 
+        }
+      } /> 
+    </SharedStack.Navigator>
+  );
+};
+
+function App() {
+  return (
+    <ApplicationProvider {...eva} theme={eva.light} >
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="Home" component={HomeScreen} options={{
+          headerShown: false
+        }} />
+        <Stack.Screen name="Poke" component={SharedStackScreen} options={{
+          headerShown: false
+        }} />
       </Stack.Navigator>
     </NavigationContainer>  
     </ApplicationProvider>

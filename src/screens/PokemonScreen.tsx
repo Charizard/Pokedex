@@ -7,6 +7,7 @@ import { useHeaderHeight } from '@react-navigation/stack';
 import HexagonBg from '../../assets/svgs/hexagon-bg.svg';
 import PokemonDetails from '../components/PokemonDetails';
 import { Text } from '@ui-kitten/components';
+import { SharedElement } from 'react-navigation-shared-element';
 
 export default function PokemonScreen({ route }) {
   const pokemonId = route.params.pokemonId;
@@ -19,7 +20,6 @@ export default function PokemonScreen({ route }) {
       try {
         const response = await PokeApi.get(`pokemon/${pokemonId}`);
         setState({ pokemon: response.data, isFetching: false });
-        console.log(response.data);
       } catch (error) {
         console.error(error);
       }
@@ -40,7 +40,9 @@ export default function PokemonScreen({ route }) {
         <HexagonBg fill={"white"} style={[StyleSheet.absoluteFill, styles.backgroundHexagon]} />
         <View style={styles.safePadding}>
           <View style={styles.headlineText}>
-            <Text category="h2" style={styles.pokemonName}>{pokemon.name}</Text>
+            <SharedElement id={`item.${pokemonId}.name`}>
+              <Text category="h2" style={styles.pokemonName}>{pokemon.name}</Text>
+            </SharedElement>
             <Text category="h2" style={styles.pokemonName}>#{pokedexNumber}</Text>
           </View>
           <FlatList
@@ -56,7 +58,10 @@ export default function PokemonScreen({ route }) {
             }}
           />
         </View>
-        <Image style={styles.pokemonImage} source={imageMapping[pokemonId]} />
+
+        <SharedElement id={`item.${pokemonId}.photo`} style={{ zIndex: 2 }}>
+          <Image style={styles.pokemonImage} source={imageMapping[pokemonId]} />
+        </SharedElement>
         <View style={styles.pokeDetailsContainer}>
           <View style={[styles.safePadding, { marginTop: 40 }]}>
             <PokemonDetails details={pokemon}/>
@@ -111,8 +116,7 @@ const styles = StyleSheet.create({
     height: 250,
     marginTop: -20,
     alignSelf: 'center',
-    opacity: 1,
-    zIndex: 2
+    opacity: 1
   },
   pokeDetailsContainer: {
     zIndex: 1,

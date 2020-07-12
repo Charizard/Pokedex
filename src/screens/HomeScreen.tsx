@@ -13,7 +13,7 @@ interface ButtonType {
 function itemRenderer(navigation) {
   return function({ item }) {
     return (
-      <TouchableOpacity style={[styles.box, { backgroundColor: item.color }]} onPress={() => navigation.navigate(item.screen)}>
+      <TouchableOpacity style={[styles.box, { backgroundColor: item.color }]} onPress={() => navigation.navigate("Poke" , { screen: item.screen })}>
         <View>
           <Pokeball style={[styles.miniPokeball]} />
           <Text style={styles.boxText}>{item.title}</Text>

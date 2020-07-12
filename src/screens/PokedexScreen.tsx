@@ -6,19 +6,22 @@ import imageMapping from '../utils/pokeImageMapping';
 import HeroLayout from '../components/HeroLayout';
 import { useHeaderHeight } from '@react-navigation/stack';
 import { useSafeArea } from 'react-native-safe-area-context';
+import { SharedElement } from 'react-navigation-shared-element';
 
 function renderPokemon(navigation) {
   return function({ item }) {
     let pokemonId: number = item.url.match(/([^/?]+)(?=\/?(?:$|\?))/)[0];
     return (
       <TouchableOpacity
-        onPress={() => navigation.navigate('Pokemon', { pokemonId }) }
+        onPress={() => navigation.push('Pokemon', { pokemonId }) }
         style={[styles.box, { backgroundColor: '#159F6E' }]}
         >
-        <Image style={styles.thumbNail} source={imageMapping[pokemonId]} />
-        <Text style={styles.pokeName}>
-          {item.name}
-        </Text>
+        <SharedElement id={`item.${pokemonId}.photo`}>
+          <Image style={styles.thumbNail} source={imageMapping[pokemonId]} />
+        </SharedElement>
+        <SharedElement id={`item.${pokemonId}.name`}>
+          <Text style={styles.pokeName}>{item.name}</Text>
+        </SharedElement>
       </TouchableOpacity>
     )
   };
