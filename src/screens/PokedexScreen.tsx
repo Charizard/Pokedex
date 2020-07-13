@@ -1,54 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, FlatList, Image, TouchableOpacity } from 'react-native';
-import PokeApi from '../apis/PokeApi';
-import Loading from '../components/Loading';
-import imageMapping from '../utils/pokeImageMapping';
+import { StyleSheet, FlatList } from 'react-native';
 import HeroLayout from '../components/HeroLayout';
 import { useHeaderHeight } from '@react-navigation/stack';
 import { useSafeArea } from 'react-native-safe-area-context';
-import { SharedElement } from 'react-navigation-shared-element';
-
-function renderPokemon(navigation) {
-  return function({ item }) {
-    let pokemonId: number = item.url.match(/([^/?]+)(?=\/?(?:$|\?))/)[0];
-    return (
-      <TouchableOpacity
-        onPress={() => navigation.push('Pokemon', { pokemonId }) }
-        style={[styles.box, { backgroundColor: '#159F6E' }]}
-        >
-        <SharedElement id={`item.${pokemonId}.photo`}>
-          <Image style={styles.thumbNail} source={imageMapping[pokemonId]} />
-        </SharedElement>
-        <SharedElement id={`item.${pokemonId}.name`}>
-          <Text style={styles.pokeName}>{item.name}</Text>
-        </SharedElement>
-      </TouchableOpacity>
-    )
-  };
-}
+import pokeData from '../utils/pokeData';
+import PokeCard from '../components/PokeCard';
 
 export default function PokedexScreen({ navigation }) {
-  const [state, setState] = useState({ pokemons: {}, isFetching: true});
+  const [state, setState] = useState({ pokemons: [] });
 
   const headerHeight = useHeaderHeight();
   const insets = useSafeArea();
 
   useEffect(() => {
-    const fetchPokemons = async () => {
-      try {
-        const response = await PokeApi.get('pokemon');
-        setState({ pokemons: response.data, isFetching: false });
-      } catch (error) {
-        console.error(error);
-      }
+    const fetchPokemons = () => {
+      setState({ pokemons: pokeData.slice(0, 20) });
     };
 
     fetchPokemons();
   }, []);
-
-  if (state.isFetching) {
-    return <Loading />;
-  }
 
   return (
     <HeroLayout title="Pokédex" style={{ paddingTop: headerHeight - insets.top }}>
@@ -60,21 +30,16 @@ export default function PokedexScreen({ navigation }) {
         contentContainerStyle={styles.containerView}
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
-        data={state.pokemons.results}
-        keyExtractor={(item) => item.url }
-        renderItem={renderPokemon(navigation)}
+        data={state.pokemons}
+        renderItem={({ item }) => {
+          return <PokeCard navigation={navigation} pokemon={item} />
+        }}
       />
     </HeroLayout>
   )
 };
 
 const styles = StyleSheet.create({
-  pokeName: {
-    fontFamily: 'SourceSansPro-Regular',
-    color: 'white',
-    fontSize: 16,
-    textTransform: 'capitalize'
-  },
   containerView: {
     flexDirection: 'column',
     padding: 20,
@@ -83,28 +48,4 @@ const styles = StyleSheet.create({
     paddingTop: 5,
     justifyContent: 'space-between'
   },
-  box: {
-    flexBasis: '47%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 12,
-    height: 120,
-    marginBottom: 15,
-    padding: 10,
-    backgroundColor: '#ffffff',
-    shadowColor: "#000",
-    overflow: "hidden",
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-    shadowOpacity: 0.29,
-    shadowRadius: 4.65,
-
-    elevation: 7,
-  },
-  thumbNail: {
-    width: 90,
-    height: 90
-  }
 });

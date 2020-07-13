@@ -2,15 +2,21 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, FlatList, Image, SafeAreaView } from 'react-native';
 import PokeApi from '../apis/PokeApi';
 import Loading from '../components/Loading';
+import PokemonDetails from '../components/PokemonDetails';
+import PokeTypePill from '../components/PokeTypePill';
+
 import imageMapping from '../utils/pokeImageMapping';
+import pokeColorMapping from '../utils/pokeColorMapping';
+
 import { useHeaderHeight } from '@react-navigation/stack';
 import HexagonBg from '../../assets/svgs/hexagon-bg.svg';
-import PokemonDetails from '../components/PokemonDetails';
 import { Text } from '@ui-kitten/components';
 import { SharedElement } from 'react-navigation-shared-element';
 
 export default function PokemonScreen({ route }) {
-  const pokemonId = route.params.pokemonId;
+  const { pokemon } = route.params;
+  const pokemonId = pokemon.id;
+  const pokemonType = pokemon.type[0];
   const [ state, setState ] = useState({ pokemon: {}, isFetching: true });
 
   const headerHeight = useHeaderHeight();
@@ -28,14 +34,8 @@ export default function PokemonScreen({ route }) {
     fetchPokemons();
   }, []);
 
-  if (state.isFetching) {
-    return <Loading />;
-  }
-
-  const { pokemon } = state;
-  const pokedexNumber = `${'0'.repeat(3 - `${pokemonId}`.length)}${pokemonId}`;
   return (
-    <View style={[styles.pokemonHeroBackground, { paddingTop: headerHeight }]}>
+    <View style={[ { backgroundColor: pokeColorMapping[pokemonType] }, { paddingTop: headerHeight }]}>
       <SafeAreaView>
         <HexagonBg fill={"white"} style={[StyleSheet.absoluteFill, styles.backgroundHexagon]} />
         <View style={styles.safePadding}>
@@ -43,18 +43,14 @@ export default function PokemonScreen({ route }) {
             <SharedElement id={`item.${pokemonId}.name`}>
               <Text category="h2" style={styles.pokemonName}>{pokemon.name}</Text>
             </SharedElement>
-            <Text category="h2" style={styles.pokemonName}>#{pokedexNumber}</Text>
+            <Text category="h2" style={styles.pokemonName}>#{pokemon.number}</Text>
           </View>
           <FlatList
             contentContainerStyle={styles.typesContainer}
-            data={pokemon.types}
-            keyExtractor={(item) => item.slot.toString() }
+            data={pokemon.type}
+            keyExtractor={(item) => item.toString() }
             renderItem={({ item }) => {
-              return (
-                <View style={styles.typeTag}>
-                  <Text category="c1" style={styles.typeText}>{item.type.name}</Text>
-                </View>
-              );
+              return <PokeTypePill type={item}/>;
             }}
           />
         </View>
@@ -64,7 +60,7 @@ export default function PokemonScreen({ route }) {
         </SharedElement>
         <View style={styles.pokeDetailsContainer}>
           <View style={[styles.safePadding, { marginTop: 40 }]}>
-            <PokemonDetails details={pokemon}/>
+            {state.isFetching ? <Loading /> : <PokemonDetails details={state.pokemon}/>}
           </View>
         </View>
       </SafeAreaView>
@@ -73,9 +69,6 @@ export default function PokemonScreen({ route }) {
 };
 
 const styles = StyleSheet.create({
-  pokemonHeroBackground: {
-    backgroundColor: '#159F6E',
-  },
   safePadding: {
     marginHorizontal: 20,
   },
@@ -99,17 +92,6 @@ const styles = StyleSheet.create({
   typesContainer: {
     marginTop: 5,
     flexDirection: 'row'
-  },
-  typeTag: {
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    paddingHorizontal: 15,
-    paddingVertical: 5,
-    borderRadius: 20,
-    marginRight: 7
-  },
-  typeText: {
-    color: 'white',
-    textTransform: 'capitalize'
   },
   pokemonImage: {
     width: 250,
