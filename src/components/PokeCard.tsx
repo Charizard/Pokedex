@@ -5,15 +5,43 @@ import { Text } from '@ui-kitten/components';
 import imageMapping from '../utils/pokeImageMapping';
 import pokeColorMapping from '../utils/pokeColorMapping';
 import PokeTypePill from './PokeTypePill';
+import { PokeDataType } from 'src/utils/pokeData';
+import { NavigationProp } from '@react-navigation/native';
+import * as Animatable from 'react-native-animatable';
 
-export default function PokeCard({ navigation, pokemon }) {
+interface PokeCardProps {
+  delay: number;
+  navigation: NavigationProp;
+  pokemon: PokeDataType;
+}
+
+export default function PokeCard({ navigation, pokemon, delay }: PokeCardProps) {
   const pokemonId = pokemon.id;
   const pokemonType = pokemon.type[0];
 
+  const animation = {
+    from: {
+      translateX: 10,
+      translateY: 10,
+      opacity: 0
+    },
+    to: {
+      translateX: 0,
+      translateY: 0,
+      opacity: 1
+    }
+  }
   return (
+    <Animatable.View
+      animation={animation}
+      easing="ease-out-cubic"
+      useNativeDriver
+      delay={delay}
+      style={[styles.box]}
+      >
     <TouchableOpacity
       onPress={() => navigation.push('Pokemon', { pokemon }) }
-      style={[styles.box, { backgroundColor: pokeColorMapping[pokemonType] }]}
+      style={[{ backgroundColor: pokeColorMapping[pokemonType] }, styles.touch]}
     >
       <SharedElement
         id={`item.${pokemonId}.background`}
@@ -36,37 +64,27 @@ export default function PokeCard({ navigation, pokemon }) {
       <SharedElement id={`item.${pokemonId}.photo`}>
         <Image style={styles.thumbNail} source={imageMapping[pokemonId]} />
       </SharedElement>
-    </TouchableOpacity>
+    </TouchableOpacity>    
+    </Animatable.View>
   );
 };
 
 const styles = StyleSheet.create({
+  touch: {
+    flexDirection: 'row',
+    flex: 1, 
+    borderRadius: 12 
+  },
   bg: {
     position: 'absolute',
     width: '100%',
     height: '100%',
-    // backgroundColor: "blue",
-    // borderWidth: 1,
-    // borderColor: 'red'
   },
   box: {
     flexBasis: '48%',
-    flexDirection: 'row',
-    borderRadius: 12,
     height: 120,
     marginBottom: 12,
-    // padding: 10,
     backgroundColor: '#ffffff',
-    shadowColor: "#000",
-    overflow: "hidden",
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-    shadowOpacity: 0.29,
-    shadowRadius: 4.65,
-
-    elevation: 7,
   },
   thumbNail: {
     width: 90,

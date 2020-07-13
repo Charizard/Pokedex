@@ -3,18 +3,27 @@ import { StyleSheet, FlatList } from 'react-native';
 import HeroLayout from '../components/HeroLayout';
 import { useHeaderHeight } from '@react-navigation/stack';
 import { useSafeArea } from 'react-native-safe-area-context';
-import pokeData from '../utils/pokeData';
+import pokeData, { PokeDataType } from '../utils/pokeData';
 import PokeCard from '../components/PokeCard';
+import { NavigationProp } from '@react-navigation/native';
 
-export default function PokedexScreen({ navigation }) {
-  const [state, setState] = useState({ pokemons: [] });
+interface PokedexScreenProps {
+  navigation: NavigationProp;
+}
+
+interface PokedexScreenState {
+  pokemons: Array<PokeDataType>
+}
+
+export default function PokedexScreen({ navigation }: PokedexScreenProps) {
+  const [state, setState] = useState<PokedexScreenState>({ pokemons: [] });
 
   const headerHeight = useHeaderHeight();
   const insets = useSafeArea();
 
   useEffect(() => {
     const fetchPokemons = () => {
-      setState({ pokemons: pokeData.slice(0, 20) });
+      setState({ pokemons: pokeData });
     };
 
     fetchPokemons();
@@ -31,8 +40,8 @@ export default function PokedexScreen({ navigation }) {
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
         data={state.pokemons}
-        renderItem={({ item }) => {
-          return <PokeCard navigation={navigation} pokemon={item} />
+        renderItem={({ item, index }) => {
+          return <PokeCard navigation={navigation} pokemon={item} delay={120 * Math.floor(index / 2)} />
         }}
       />
     </HeroLayout>
