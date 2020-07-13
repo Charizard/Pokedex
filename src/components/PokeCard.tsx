@@ -1,9 +1,10 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, TouchableOpacity, Image, FlatList, View } from 'react-native';
 import { SharedElement } from 'react-navigation-shared-element';
 import { Text } from '@ui-kitten/components';
 import imageMapping from '../utils/pokeImageMapping';
 import pokeColorMapping from '../utils/pokeColorMapping';
+import PokeTypePill from './PokeTypePill';
 
 export default function PokeCard({ navigation, pokemon }) {
   const pokemonId = pokemon.id;
@@ -13,10 +14,25 @@ export default function PokeCard({ navigation, pokemon }) {
     <TouchableOpacity
       onPress={() => navigation.push('Pokemon', { pokemon }) }
       style={[styles.box, { backgroundColor: pokeColorMapping[pokemonType] }]}
-      >
-      <SharedElement id={`item.${pokemonId}.name`}>
-        <Text style={styles.pokeName}>{pokemon.name}</Text>
-      </SharedElement>
+    >
+      <SharedElement
+        id={`item.${pokemonId}.background`}
+        style={styles.bg}
+      />
+      <View style={styles.leftCol}>
+        <SharedElement id={`item.${pokemonId}.name`}>
+          <Text style={styles.pokeName}>{pokemon.name}</Text>
+        </SharedElement>
+        <FlatList
+          listKey={`list.${pokemonId}.type`}
+          data={pokemon.type}
+          scrollEnabled={false}
+          keyExtractor={(item) => item.toString() }
+          renderItem={({ item }) => {
+            return <PokeTypePill type={item} pillContainerStyles={styles.pillContainerStyles} pokemonId={pokemonId} />;
+          }}
+        />
+      </View>
       <SharedElement id={`item.${pokemonId}.photo`}>
         <Image style={styles.thumbNail} source={imageMapping[pokemonId]} />
       </SharedElement>
@@ -25,13 +41,21 @@ export default function PokeCard({ navigation, pokemon }) {
 };
 
 const styles = StyleSheet.create({
+  bg: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    // backgroundColor: "blue",
+    // borderWidth: 1,
+    // borderColor: 'red'
+  },
   box: {
-    flexBasis: '47%',
-    justifyContent: 'center',
+    flexBasis: '48%',
+    flexDirection: 'row',
     borderRadius: 12,
     height: 120,
-    marginBottom: 15,
-    padding: 10,
+    marginBottom: 12,
+    // padding: 10,
     backgroundColor: '#ffffff',
     shadowColor: "#000",
     overflow: "hidden",
@@ -45,19 +69,27 @@ const styles = StyleSheet.create({
     elevation: 7,
   },
   thumbNail: {
-    width: 100,
-    height: 100,
-    alignSelf: 'flex-end',
-    marginRight: -10,
-    marginBottom: -10
+    width: 90,
+    height: 90,
+    marginLeft: -10,
+    marginTop: 20
   },
   pokeName: {
-    fontFamily: 'SourceSansPro-Regular',
+    fontFamily: 'SourceSansPro-Bold',
+    fontWeight: 'bold',
     color: 'white',
-    fontSize: 16,
-    marginLeft: 10,
-    marginTop: -5,
+    fontSize: 18,
     textTransform: 'capitalize',
-    position: 'absolute'
+    marginBottom: 10,
+  },
+  pillContainerStyles: {
+    marginTop: 5,
+    marginRight: 0
+  },
+  leftCol: {
+    marginLeft: 10,
+    marginTop: 10,
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start'
   }
 });

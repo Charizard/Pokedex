@@ -46,11 +46,12 @@ export default function PokemonScreen({ route }) {
             <Text category="h2" style={styles.pokemonName}>#{pokemon.number}</Text>
           </View>
           <FlatList
+            listKey={`pokemonTypes.${pokemonId}`}
             contentContainerStyle={styles.typesContainer}
             data={pokemon.type}
             keyExtractor={(item) => item.toString() }
             renderItem={({ item }) => {
-              return <PokeTypePill type={item}/>;
+              return <PokeTypePill type={item} pokemonId={pokemonId}/>;
             }}
           />
         </View>

@@ -30,10 +30,16 @@ function SharedStackScreen() {
       }} />
       <SharedStack.Screen name="Pokemon" component={PokemonScreen}   
         sharedElementsConfig={(route, otherRoute, showing) => {
-          const { pokemon: { id } } = route.params;
+          const { pokemon: { id, type } } = route.params;
+          const typeIds = type.map((t) => {
+            return `item.${id}.type.${t}`;
+          }); 
+
           return [
+            `item.${id}.background`,
             `item.${id}.photo`,
-            `item.${id}.name`
+            `item.${id}.name`,
+            ...typeIds
           ];
         }}
         options={{

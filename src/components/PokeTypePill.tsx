@@ -1,12 +1,15 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Text } from '@ui-kitten/components';
+import { SharedElement } from 'react-navigation-shared-element';
 
-export default function PokeTypePill({ type }) {
+export default function PokeTypePill({ type, pokemonId, pillContainerStyles }) {
   return (
-    <View style={styles.typeTag}>
-      <Text category="c1" style={styles.typeText}>{type}</Text>
-    </View>
+    <SharedElement id={`item.${pokemonId}.type.${type}`}>
+      <View style={[styles.typeTag, pillContainerStyles]}>
+        <Text category="c1" style={styles.typeText}>{type}</Text>
+      </View>
+    </SharedElement>
   );
 };
 
